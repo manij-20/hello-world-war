@@ -23,7 +23,7 @@ choice(name: 'cmd1', choices: ['install', 'compile'], description: 'Choose one o
                              keyFileVariable: 'Mani_SSH_KEY',
                              usernameVariable: 'Mani_SSH_USER' 
                         )])*/
-            {
+            
                sh "rm -rf hello-world-war"
                sh "https://github.com/manij-20/hello-world-war.git"
            }
