@@ -13,17 +13,18 @@ choice(name: 'cmd1', choices: ['install', 'compile'], description: 'Choose one o
             agent { label 'java' }
         steps {
                 
-                /*withCredentials([
-                    usernamePassword(
-                            credentialsId: 'b4d75de9-e9e1-4da6-a7d0-c04178470421',
-                            usernameVariable: 'Mani_USER',
-                            passwordVariable: 'Mani_PASS'  ),
-                     sshUserPrivateKey(
-                            credentialsId: 'b4d75de9-e9e1-4da6-a7d0-c04178470421',
-                             keyFileVariable: 'Mani_SSH_KEY',
-                             usernameVariable: 'Mani_SSH_USER' 
-                        )])*/
-            
+                 withCredentials([usernamePassword(
+                    credentialsId: '0eec030f-5691-4702-bbd5-42e104f8b43c',
+                    usernameVariable: 'admin',
+                    passwordVariable: 'admin_password'
+                ),
+                    sshUserPrivateKey(
+    credentialsId: 'b4d75de9-e9e1-4da6-a7d0-c04178470421',
+    keyFileVariable: 'KEY_FILE',
+    usernameVariable: 'SSH_USER'
+               )
+    ]) {
+
                sh "rm -rf hello-world-war"
                sh "https://github.com/manij-20/hello-world-war.git"
            }
