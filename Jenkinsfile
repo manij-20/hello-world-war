@@ -24,7 +24,7 @@ choice(name: 'cmd1', choices: ['install', 'compile'], description: 'Choose one o
                              usernameVariable: 'Mani_SSH_USER' 
                         )])
             {
-               sh "rm -rf hello-world-war_jenkins"
+               sh "rm -rf hello-world-war"
                sh "https://github.com/manij-20/hello-world-war.git"
            }
         }
@@ -39,7 +39,7 @@ choice(name: 'cmd1', choices: ['install', 'compile'], description: 'Choose one o
         stage('Deploy') {
             agent { label 'java' }
              steps {
-               sh "sudo cp /home/slave1/workspace/Jenkins_pipeline/target/hello-world-war-1.0.0.war /opt/apache-tomcat-9.0.112/webapps/"
+               sh "sudo cp /home/slave1/workspace/Hello_world_pipeline/target/hello-world-war-1.0.0.war /opt/apache-tomcat-9.0.112/webapps/"
            }
         }
     }
