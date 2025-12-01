@@ -13,10 +13,11 @@ choice(name: 'cmd1', choices: ['install', 'compile'], description: 'Choose one o
             agent { label 'java' }
         steps {
                 
-                withCredentials([usernamePassword(
+                withCredentials([
+                    /* usernamePassword(
                             credentialsId: 'b4d75de9-e9e1-4da6-a7d0-c04178470421',
                             usernameVariable: 'Mani_USER',
-                            passwordVariable: 'Mani_PASS'  ),
+                            passwordVariable: 'Mani_PASS'  ),*/
                      sshUserPrivateKey(
                             credentialsId: 'b4d75de9-e9e1-4da6-a7d0-c04178470421',
                              keyFileVariable: 'Mani_SSH_KEY',
