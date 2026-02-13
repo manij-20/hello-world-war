@@ -1,50 +1,41 @@
 pipeline {
-    // agent { label 'java' }
-    agent none
+    agent any
 
-    parameters {
-        string(name: 'cmd', defaultValue: 'default', description: 'A sample string parameter')
-        booleanParam(name: 'SAMPLE_BOOLEAN', defaultValue: true, description: 'A boolean parameter')
-        choice(name: 'cmd1', choices: ['install', 'compile'], description: 'Choose one option')
+    environment {
+        IMAGE_NAME = "hello-world-app"
+        CONTAINER_NAME = "hello-world-container"
     }
 
     stages {
-        stage('hello-world-war') {
-            parallel {
-                stage('checkout') {
-                    agent { label 'java' }
-                    steps {
-                        withCredentials([
-                            usernamePassword(
-                                credentialsId: '0eec030f-5691-4702-bbd5-42e104f8b43c',
-                                usernameVariable: 'admin',
-                                passwordVariable: 'admin_password'
-                            ),
-                            sshUserPrivateKey(
-                                credentialsId: 'b4d75de9-e9e1-4da6-a7d0-c04178470421',
-                                keyFileVariable: 'KEY_FILE',
-                                usernameVariable: 'SSH_USER'
-                            )
-                        ]) {
-                            sh "rm -rf hello-world-war"
-                            sh "git clone https://github.com/manij-20/hello-world-war.git"
-                        }
-                    }
-                }
+
+        stage('Checkout Code') {
+            steps {
+                git 'https://github.com/manij-20/hello-world-war.git'
             }
         }
 
-        stage('Build') {
-            agent { label 'java' }
+        stage('Build Docker Image') {
             steps {
-                sh "mvn ${cmd} ${cmd1}"
+                sh 'docker build -t $IMAGE_NAME .'
             }
         }
 
-        stage('Deploy') {
-            agent { label 'java' }
+        stage('Stop Old Container') {
             steps {
-                sh "sudo cp /home/slave1/workspace/Hello_world_pipeline/target/hello-world-war-1.0.0.war /opt/apache-tomcat-9.0.112/webapps/"
+                sh '''
+                docker stop $CONTAINER_NAME || true
+                docker rm $CONTAINER_NAME || true
+                '''
+            }
+        }
+
+        stage('Run Container') {
+            steps {
+                sh '''
+                docker run -d -p 8080:8080 \
+                --name $CONTAINER_NAME \
+                $IMAGE_NAME
+                '''
             }
         }
     }
