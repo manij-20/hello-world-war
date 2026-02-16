@@ -19,7 +19,7 @@ pipeline {
 
         stage('Checkout Code') {
             steps {
-                git branch: 'main',
+                git branch: 'master',
                     url: 'https://github.com/manij-20/hello-world-war.git'
             }
         }
