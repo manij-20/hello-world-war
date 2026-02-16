@@ -8,7 +8,7 @@ pipeline {
     }
 
     environment {
-        IMAGE_NAME     = "manidockerhub/hello-world-war"
+        IMAGE_NAME     = "mani2009/hello-world-war"
         IMAGE_TAG      = "${BUILD_NUMBER}"
         DOCKER_CREDS   = "dockerhub-creds"
         CONTAINER_NAME = "hello-world-war-container"
