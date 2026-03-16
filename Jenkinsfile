@@ -1,68 +1,49 @@
 pipeline {
-
-    agent {
-        docker {
-            image 'docker:latest'
-            args '-v /var/run/docker.sock:/var/run/docker.sock -v /usr/bin/docker:/usr/bin/docker'
-        }
-    }
+    agent any
 
     environment {
-        IMAGE_NAME     = "mani2009/hello-world-war"
-        IMAGE_TAG      = "${BUILD_NUMBER}"
-        DOCKER_CREDS   = "dockerhub-creds"
-        CONTAINER_NAME = "hello-world-war-container"
-        HOME           = "${WORKSPACE}"
+        DOCKER_IMAGE = "mani2009/hello-war"
+        TAG = "latest"
+        DOCKER_CREDENTIALS = "dockerhub-creds"
     }
 
     stages {
 
-        stage('Checkout Code') {
+        stage('Clone Repository') {
             steps {
-                git branch: 'master',
-                    url: 'https://github.com/manij-20/hello-world-war.git'
+                git 'https://github.com/manij-20/hello-world-war.git'
+            }
+        }
+
+        stage('Build WAR with Maven') {
+            steps {
+                sh 'mvn clean package'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
+                sh 'docker build -t $DOCKER_IMAGE:$TAG .'
             }
         }
 
-        stage('Login to Docker Hub') {
+        stage('Push Docker Image') {
             steps {
-                withCredentials([usernamePassword(
-                    credentialsId: "${DOCKER_CREDS}",
-                    usernameVariable: 'DOCKER_USER',
-                    passwordVariable: 'DOCKER_PASS'
-                )]) {
+                withCredentials([usernamePassword(credentialsId: "$DOCKER_CREDENTIALS",
+                usernameVariable: 'DOCKER_USER',
+                passwordVariable: 'DOCKER_PASS')]) {
+
                     sh '''
-                        echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+                    docker login -u $DOCKER_USER -p $DOCKER_PASS
+                    docker push $DOCKER_IMAGE:$TAG
                     '''
                 }
             }
         }
 
-        stage('Push Image to Docker Hub') {
+        stage('Deploy to Kubernetes with Helm') {
             steps {
-                sh "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
-            }
-        }
-
-        stage('Deploy Application') {
-            steps {
-                sh '''
-                    # Stop and remove existing container if exists
-                    docker stop ${CONTAINER_NAME} || true
-                    docker rm ${CONTAINER_NAME} || true
-
-                    # Run container
-                    docker run -d \
-                        --name ${CONTAINER_NAME} \
-                        -p 8085:8080 \
-                        ${IMAGE_NAME}:${IMAGE_TAG}
-                '''
+                sh 'helm upgrade --install hello-war ./hello-war-chart'
             }
         }
     }
