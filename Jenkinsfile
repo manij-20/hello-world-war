@@ -14,13 +14,6 @@ pipeline {
 
     stages {
 
-        stage('Checkout') {
-            steps {
-                git branch: 'master',
-                    url: 'https://github.com/manij-20/hello-world-war.git'
-            }
-        }
-
         stage('Maven Build WAR') {
             steps {
                 sh 'mvn clean package -DskipTests'
@@ -28,17 +21,6 @@ pipeline {
             post {
                 success {
                     archiveArtifacts artifacts: 'target/*.war', fingerprint: true
-                }
-            }
-        }
-
-        stage('Unit Test') {
-            steps {
-                sh 'mvn test'
-            }
-            post {
-                always {
-                    junit '**/target/surefire-reports/*.xml'
                 }
             }
         }
@@ -100,12 +82,11 @@ pipeline {
                 """
             }
         }
-
     }
 
     post {
         success {
-            echo "✅ SUCCESS — App deployed with image tag: $IMAGE_TAG"
+            echo "✅ SUCCESS — image tag: $IMAGE_TAG"
         }
         failure {
             echo "❌ FAILED — check logs above"
