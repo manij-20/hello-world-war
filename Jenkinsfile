@@ -9,11 +9,21 @@ spec:
   containers:
   - name: jnlp
     image: jenkins/inbound-agent:latest
-    args: ["$(JENKINS_SECRET)", "$(JENKINS_NAME)"]
     resources:
       requests:
         cpu: "100m"
         memory: "128Mi"
+    volumeMounts:
+    - name: workspace-volume
+      mountPath: /home/jenkins/agent
+  - name: maven
+    image: maven:3.9-eclipse-temurin-11
+    command: ["cat"]
+    tty: true
+    resources:
+      requests:
+        cpu: "200m"
+        memory: "512Mi"
     volumeMounts:
     - name: workspace-volume
       mountPath: /home/jenkins/agent
@@ -69,7 +79,7 @@ spec:
 
         stage('Maven Build WAR') {
             steps {
-                container('tools') {
+                container('maven') {        // ← use maven container
                     sh 'mvn clean package -DskipTests'
                 }
             }
