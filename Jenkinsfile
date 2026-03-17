@@ -6,7 +6,7 @@ pipeline {
         IMAGE_TAG    = "${BUILD_NUMBER}"
         HELM_CHART   = "hello-war-chart"
         HELM_VERSION = "0.1.0"
-        JFROG_URL    = "https://trial3sfswa.jfrog.io/artifactory/jenkins-helm"
+        JFROG_URL    = "https://trial5tqwdi.jfrog.io/artifactory/jenkins-helm"
         KUBE_NS      = "default"
         DOCKER_CREDS = credentials('dockerhub-creds')
         JFROG_CREDS  = credentials('jfrog-creds')
