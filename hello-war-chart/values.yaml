@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: mani2009/hello-war
+  repository: mani2009/hello-world-war
   tag: latest
   pullPolicy: Always
 
