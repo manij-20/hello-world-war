@@ -10,6 +10,10 @@ spec:
   - name: jnlp
     image: jenkins/inbound-agent:latest
     args: ["$(JENKINS_SECRET)", "$(JENKINS_NAME)"]
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "128Mi"
     volumeMounts:
     - name: workspace-volume
       mountPath: /home/jenkins/agent
@@ -17,6 +21,10 @@ spec:
     image: gcr.io/kaniko-project/executor:debug
     command: ["/busybox/cat"]
     tty: true
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "256Mi"
     volumeMounts:
     - name: kaniko-secret
       mountPath: /kaniko/.docker
@@ -26,6 +34,10 @@ spec:
     image: dtzar/helm-kubectl:latest
     command: ["cat"]
     tty: true
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "128Mi"
     volumeMounts:
     - name: workspace-volume
       mountPath: /home/jenkins/agent
