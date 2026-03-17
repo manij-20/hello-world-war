@@ -4,7 +4,7 @@ pipeline {
     environment {
         DOCKER_IMAGE = "docker.io/mani2009/hello-world-war"
         IMAGE_TAG    = "${BUILD_NUMBER}"
-        HELM_CHART   = "hello-war-hello-war-chart"
+        HELM_CHART   = "hello-war-chart"
         HELM_VERSION = "0.1.0"
         JFROG_URL    = "https://trial3sfswa.jfrog.io/artifactory/jenkins-helm"
         KUBE_NS      = "default"
